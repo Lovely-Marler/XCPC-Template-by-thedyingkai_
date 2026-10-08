@@ -64,11 +64,23 @@
 
 #code("数据结构/并查集/可撤销并查集.cpp")
 
+=== 倍增并查集
+
+#include "数据结构/并查集/倍增并查集.typ"
+
+#code("数据结构/并查集/倍增并查集.cpp")
+
 == 对顶堆
 
 #include "数据结构/对顶堆/对顶堆.typ"
 
 #code("数据结构/对顶堆/对顶堆.cpp")
+
+== 左偏树（可并堆）
+
+#include "数据结构/可并堆/左偏树.typ"
+
+#code("数据结构/可并堆/左偏树.cpp")
 
 == 树状数组
 
@@ -111,6 +123,12 @@
 #include "数据结构/主席树/主席树.typ"
 
 #code("数据结构/主席树/主席树.cpp")
+
+== 权值线段树合并
+
+#include "数据结构/线段树合并/权值线段树合并.typ"
+
+#code("数据结构/线段树合并/权值线段树合并.cpp")
 
 == 李超树
 
@@ -525,6 +543,38 @@
 #code("数学/计算几何/扫描线求矩形面积并/扫描线求矩形面积并.cpp", mode: "full", ignore-main: false)
 
 
+#pagebreak()
+
+= 动态规划
+
+#include "动态规划/动态规划.typ"
+
+== 背包
+
+#include "动态规划/背包/背包.typ"
+
+#code("动态规划/背包/背包.cpp")
+
+== 最长上升子序列与方案重建
+
+#include "动态规划/序列 DP/最长上升子序列.typ"
+
+#code("动态规划/序列 DP/最长上升子序列.cpp", mode: "full")
+
+== Knuth 优化与石子合并
+
+#include "动态规划/区间 DP/Knuth 石子合并.typ"
+
+#code("动态规划/区间 DP/Knuth 石子合并.cpp")
+
+== 换根 DP：带权距离和
+
+#include "动态规划/树形 DP/换根距离和.typ"
+
+#code("动态规划/树形 DP/换根距离和.cpp", mode: "full")
+
+#pagebreak()
+
 = 图论
 
 == Dijkstra
@@ -532,6 +582,12 @@
 #include "图论/Dijkstra/Dijkstra.typ"
 
 #code("图论/Dijkstra/Dijkstra.cpp", mode: "full", ignore-main: false)
+
+== 线段树优化建图
+
+#include "图论/区间建图/线段树优化建图.typ"
+
+#code("图论/区间建图/线段树优化建图.cpp")
 
 == Floyd
 
@@ -614,6 +670,18 @@
 === Kruskal
 
 #code("图论/MST/Kruskal.cpp")
+
+=== Borůvka 异或最小生成树
+
+#include "图论/MST/Boruvka 异或最小生成树.typ"
+
+#code("图论/MST/Boruvka 异或最小生成树.cpp", mode: "full")
+
+=== 严格次小生成树
+
+#include "图论/MST/严格次小生成树.typ"
+
+#code("图论/MST/严格次小生成树.cpp")
 
 == Kruskal 重构树
 
