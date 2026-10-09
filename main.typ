@@ -201,6 +201,11 @@
 #code("数据结构/线性基/线性基.cpp")
 
 
+
+== 位运算 Trick：拆位与集合
+
+#include "数据结构/Trick/位运算 Trick.typ"
+
 #pagebreak()
 
 
@@ -399,6 +404,11 @@
 
 #code("数学/SG 与 Nim/SG 与 Nim.cpp", parts: ("nim", "subtraction-game", "dag-sg"))
 
+
+== 博弈论 Trick：胜负与策略
+
+#include "数学/Trick/博弈论 Trick.typ"
+
 == 生成函数
 
 #include "数学/生成函数/生成函数.typ"
@@ -535,6 +545,11 @@
 #code("数学/计算几何/扫描线求矩形面积并/扫描线求矩形面积并.cpp", mode: "full", ignore-main: false)
 
 
+
+== 数学 Trick：数论、组合与期望
+
+#include "数学/Trick/数学 Trick.typ"
+
 #pagebreak()
 
 = 动态规划
@@ -564,6 +579,11 @@
 #include "动态规划/树形 DP/换根距离和.typ"
 
 #code("动态规划/树形 DP/换根距离和.cpp", mode: "full")
+
+
+== DP Trick：状态与转移
+
+#include "动态规划/Trick/DP Trick.typ"
 
 #pagebreak()
 
@@ -811,6 +831,11 @@
 
 #code("图论/网络流/有上下界可行流.cpp")
 
+
+== 树 Trick：结构与贡献
+
+#include "图论/Trick/树 Trick.typ"
+
 #pagebreak()
 
 
@@ -930,3 +955,13 @@
 === 进程对拍
 
 #code("杂项/对拍/进程对拍.cpp", mode: "full", ignore-main: false)
+
+
+== 杂项 Trick：观察、构造与离线
+
+#include "杂项/Trick/杂项 Trick.typ"
+
+
+== Trick 关键词速查与训练
+
+#include "杂项/Trick/关键词速查.typ"
