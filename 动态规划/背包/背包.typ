@@ -1,16 +1,20 @@
-`Knapsack(V, exact)` 维护最大价值。`exact=false` 时，`dp[j]` 表示总体积不超过 `j` 的最优值，初始全为零；`exact=true` 时表示总体积恰好等于 `j`，仅 `dp[0]=0`，其余为 `NEG`。允许负价值，允许一种物品数量为零，物品体积必须为正。
+求容量 `V` 下的最大价值，物品体积 `v>0`，数量 `c>=0`，价值可负。`Knapsack(V,exact=false)` 的答案为 `dp[V]`，空间 $O(V)$。
 
-- `add01(v,w)`：加入一件物品，容量倒序，时间 $O(V)$。
-- `addComplete(v,w)`：加入无限件同类物品，容量正序，时间 $O(V)$。
-- `addBoundedBinary(v,w,c)`：把数量拆成 `1,2,4,...,余数`，当成若干 01 物品。先把 `c` 截到 `V/v`，时间 $O(V log(c+1))$。
-- `addBoundedQueue(v,w,c)`：按容量模 `v` 的余数分组，每种物品用单调队列做到 $O(V)$。
+*先选容量含义*　`exact=false` 表示体积至多 `j`，初值全 0；`exact=true` 表示恰好 `j`，仅 `dp[0]=0`，其余为 `Knapsack::NEG`。恰好装满时须检查 `dp[V]!=NEG`。
 
-令容量 `j=r+t*v`，从上一层的 `r+s*v` 转移，需要选 `t-s` 件物品，因而
-$ f(r+t v) = t w + max_(max(0,t-c) <= s <= t) (g(r+s v)-s w). $
-每个余数组内只需维护一个长度至多 `c+1` 的滑动窗口最大值。代码复制上一层为 `old`，从队头删除过期决策，只把可达状态加入队列；若直接读取正在修改的 `dp`，就会重复使用本类物品。
+#table(
+ columns: (auto, 1fr, auto),
+ table.header([接口], [件数与循环], [每种物品]),
+ [`add01(v,w)`], [一件，容量倒序], [$O(V)$],
+ [`addComplete(v,w)`], [无限件，容量正序], [$O(V)$],
+ [`addBoundedBinary(v,w,c)`], [至多 `c` 件，二进制拆成 01 物品], [$O(V log(c+1))$],
+ [`addBoundedQueue(v,w,c)`], [至多 `c` 件，按容量模 `v` 分组], [$O(V)$],
+)
 
-例如 `Knapsack k(7, true); k.addBoundedQueue(3, 5, 2);` 后，`dp[6]=10`，`dp[7]=NEG`；改成至多容量语义后，`dp[7]=10`。两种多重背包实现可互换，也可和 01、完全背包混用；同一种物品只调用其中一种加入方式。
+*单调队列转移*　上一层记为 $g$，容量写成 $r+t v$：
+$ f(r+t v)=t w+max_(max(0,t-c)<=s<=t)(g(r+s v)-s w). $
+维护窗口内 `g-s*w` 的最大值，只加入可达状态。读取独立的 `old` 数组，避免把本轮更新再当旧层。二进制版本先截 `c=min(c,V/v)`。
 
-空间 $O(V)$。价值和内部乘法使用 `i128`，要求有限状态及中间算式的绝对值小于 $2^120$。零体积物品要在外部处理：完全背包中零体积正价值会令答案无界。本板求最大价值，计数背包或“每组恰选一个”的分组背包应另写转移。
+同类物品只选一种接口，不同类型可混用。价值及中间式用 `i128`，绝对值须小于 $2^120$。零体积外部处理：无限件且价值为正时答案无界。方案计数、每组恰选一件需要另写状态与转移。
 
-来源：wzj52501，#link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Dynamic-Programming-Talk.pdf")[《浅谈动态规划》PDF 第 29–33 页]；补充单调队列推导与实现。
+来源：wzj52501，#link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Dynamic-Programming-Talk.pdf")[《浅谈动态规划》29–33 页]。

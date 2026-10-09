@@ -1,19 +1,15 @@
-`logarithm(f,n)` 求 $ln f(x) mod x^n$，可将一批常数项为一的生成函数的乘积转成对数之和；`exponential(f,n)` 做相反的转换。已知 $A'/A=H$ 且 $A(0)=1$ 时，也可先积分得到 $ln A$，再求指数恢复 $A$。
+`logarithm(f,n)` 求 $ln f mod x^n$，要求 `f[0]==1`；`exponential(f,n)` 求 $exp(f) mod x^n$，要求常数项 0。均返回恰好 `n` 项，目标非负且在基础 NTT 范围内，时间 $O(n log n)$。
 
-求对数要求 `f[0]==1`，使用 $ln f=integral(f'/f)$；求指数要求输入常数项为零，用牛顿迭代将当前答案 $g$ 更新为 $g(1+f-ln g)$。两者均返回恰好 $n$ 项，复杂度为 $O(n log n)$。常数项条件必须满足，整体平移所有系数会改变原问题。
+*公式*　对数用 $ln f=integral(f'/f)$，积分常数取 0。指数从 `g=1` 起，每轮倍增：
+$ g_("new")=g(1+f-ln g) mod x^(2m). $
+旧精度 `m` 下 `f-ln g` 的低项为 0，高阶误差截去即可。
 
-多项式幂在常数项为一时可写成 $exp(k ln f)$；含前导零或首项不为一时，还要处理次数平移和首项的幂，可调用 `polynomialPower`。
+*常用转换*
 
-形式对数和指数可以按系数理解：$ln(1+x)=x-x^2/2+x^3/3-...$，$exp(x)=1+x+x^2/2!+...$，分母都换成模逆元，不涉及实数近似。本实现固定对数常数项为零、指数常数项为一。在当前长度范围内，先求导再积分会恢复除常数项外的系数；由 $(ln f)'=f'/f$，求导、求逆、卷积、积分四步便得到常数项为零的对数。
+- `A'=H*A,A(0)=1`：先积分 H，再求指数。
+- `f[0]=1` 时 `f^k=exp(k*ln(f))`；一般首项调用多项式幂接口。
+- $F=product_j (1-x^j)^(-c_j)$ 时，$[x^k]ln F=(sum_(j divides k)j c_j)/k$；枚举倍数得到对数，再求指数。
 
-求指数时，假设 $g$ 的前 $m$ 项已经等于 $exp(f)$，令 $h=f-ln g$。$h$ 的前 $m$ 项为零，因此模 $x^(2m)$ 下 $exp(h)=1+h$，含 $h^2$ 的项已经超出所需精度。于是 $exp(f)=g exp(h)=g(1+f-ln g) mod x^(2m)$，这就是倍增式。初始 $g=1$；每轮先算当前近似的对数，再修正尚未确定的高次系数，已经正确的低次系数不会被破坏。
+形式运算中的分母用模逆元，积分所需整数须可逆。EGF 数组存 `a[i]/i!`，取计数乘回阶乘；OGF 不乘。输入远长于目标时先截到所需精度，避免额外扫描。
 
-例如要求 $A'=H A$、$A(0)=1$ 的前 $n$ 项，可以先算 `integral(H)`，再调用 `exponential(...,n)`。若 $H=1$，得到的系数依次为 $1,1,1/2!,1/3!,...$。若题目要的是指数型生成函数中的计数 $a_i$，而数组存的是 $a_i/i!$，取答案时还要乘回 $i!$；普通生成函数没有这一步。
-
-乘积转求和也能减少反复相乘。例如 $F=product_j (1-x^j)^(-c_j)$，则对 $k>=1$，$ln F$ 的第 $k$ 项为 $(sum_(j divides k) j c_j)/k$。先按倍数枚举得到对数的系数，再求一次指数，就能批量计算这个乘积的前若干项。这里每个因子的常数项都是一，正好满足接口条件。
-
-所有目标长度都取非负数，并受基础 NTT 长度限制。只需要前 $n$ 项时，可先把很长的输入截到 $n$ 项；`logarithm` 中求导会遍历传入数组，不能把读取超长输入的代价漏出复杂度。若更换模数使所需积分分母等于零，上述除法与唯一性都会失效，不能照搬。
-
-#link("https://judge.yosupo.jp/problem/log_of_formal_power_series")[Library Checker · log_of_formal_power_series]
-
-#link("https://judge.yosupo.jp/problem/exp_of_formal_power_series")[Library Checker · exp_of_formal_power_series]
+题目：#link("https://judge.yosupo.jp/problem/log_of_formal_power_series")[FPS Log]、#link("https://judge.yosupo.jp/problem/exp_of_formal_power_series")[FPS Exp]。

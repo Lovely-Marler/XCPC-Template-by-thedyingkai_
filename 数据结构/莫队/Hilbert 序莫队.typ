@@ -1,11 +1,7 @@
-Hilbert 序莫队仍然用 `add/del` 维护静态闭区间，只是把 `(l,r)` 当作平面点并按 Hilbert 序排列。它通常比固定块长更稳定地保持二维局部性，但不改变莫队必须离线、端点单步移动的前提，也不能直接代替带修改莫队。
+将静态区间 `(l,r)` 按 Hilbert 序排序，随后用普通莫队的加删回调移动窗口。适合端点移动常数较大、希望改善访问局部性的题。
 
-`work` 同样从空窗口 `[1,0]` 开始，并保持回调状态恰好对应当前闭区间 `[left,right]`：扩张时先移动端点再 `add`，收缩时先 `del` 再移动端点。与普通莫队相比只替换询问排序，窗口不变量和 `add/del/answer` 接口完全相同。
+使用 1 下标闭区间，内部坐标减一，`u64` 序号要求坐标小于 $2^31$。`work` 从 `[1,0]` 开始：扩张时先移端点再加入，收缩时先删除再移端点；答案按询问 `id` 保存。
 
-- 坐标使用 `1` 下标闭区间，内部转成从 `0` 开始的平面点；当前序号使用 `u64`，要求坐标小于 $2^31$。
+与普通莫队相比只改变排序。排序为 $O(q log q)$，总耗时还取决于移动量与加删成本；可与块长 $B≈n/sqrt(q)$ 的普通莫队比较。强制在线或带时间修改的题须换相应算法。
 
-- 普通莫队的端点移动量约为 $Q B+N^2/B$，因此块长可取 $B=N/sqrt(Q)$；$Q$ 与 $N$ 同阶时就是 $sqrt(N)$。
-- 加删常数不对称时，直接对几组块长或 Hilbert 序做本地测速；带修改莫队仍按三维排序。
-
-- 与普通莫队相同，可用洛谷 P1494、P2709 对拍移动次数与答案。
-- #link("https://judge.yosupo.jp/problem/static_range_count_distinct")[Library Checker · Static Range Count Distinct]
+题目：P1494、P2709；#link("https://judge.yosupo.jp/problem/static_range_count_distinct")[Static Range Count Distinct]。

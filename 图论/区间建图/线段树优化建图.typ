@@ -1,17 +1,15 @@
-若一条操作要求从一个点向整个编号区间连同权边，逐边展开可能需要平方级空间。`RangeEdgeGraph(n)` 用两棵线段树压缩建图，原图顶点仍是 `1..n`；所有区间均为闭区间，权值必须非负。
+压缩点与区间、区间与区间之间的同权有向边。`RangeEdgeGraph(n)` 要求 `n>=1`，原点号 `1..n`，区间闭合，边权非负。
 
-- `addEdge(u,v,w)`：单点到单点。
-- `pointToRange(u,l,r,w)`：从 `u` 到 `[l,r]` 内每个点，各有一条权为 `w` 的边。
-- `rangeToPoint(l,r,v,w)`：从 `[l,r]` 内每个点到 `v`。
-- `rangeToRange(l1,r1,l2,r2,w)`：前一区间内每个点都向后一区间内每个点连权为 `w` 的边。
-- `dijkstra(s)`：返回原图 `1..n` 的距离，未到达的值为 `RangeEdgeGraph::INF`；0 号元素不用。
+- `addEdge(u,v,w)`：点到点。
+- `pointToRange(u,l,r,w)`：`u` 到 `[l,r]` 每点。
+- `rangeToPoint(l,r,v,w)`：`[l,r]` 每点到 `v`。
+- `rangeToRange(l1,r1,l2,r2,w)`：源区间每点到目标区间每点。
+- `dijkstra(s)`：返回原点 `1..n` 的 `i128` 距离，不可达为 `RangeEdgeGraph::INF`，0 号不用。
 
-出树从父亲向儿子连零权边，入树从儿子向父亲连零权边，两树的叶子共用原图顶点。点到区间连接出树的 $O(log n)$ 个覆盖节点；区间到点连接入树的覆盖节点。*不要在同一棵树上同时添加双向零权边*，否则任意两个叶子可能免费互达。
+*边的方向*　出树父到子零权，入树子到父零权，叶子共用原点。点到区间连出树覆盖节点，区间到点连入树覆盖节点。每次区间到区间操作独建中转点：源入树以 0 进入，中转点以 `w` 进入目标出树，整次只付一次权。
 
-区间到区间为每次操作单独建立一个中转点：源区间的入树节点以零权进入中转点，再用权 `w` 进入目标区间的出树节点。这样只支付一次 `w`，每次操作仍只需 $O(log n)$ 条边；不同操作不能共用中转点，否则会串接出题目中没有的边。
+双树方向须分开，操作间中转点各自独立，避免产生额外可达关系。结构节点仅压缩路径，统计原题顶点时排除它们。
 
-例如 `pointToRange(1,2,4,7)` 加上 `rangeToPoint(3,4,5,2)`，从 `1` 到 `5` 的最短距离为 `9`。结构节点和零权边只用于压缩路径，不能直接把它们当成题目的城市计数。
+普通边 $m$ 条、区间操作 $q$ 次，其中区间到区间 $b$ 次时，点数 `N=3*n-2+b`，边数 $M=O(n+m+q log n)$。当前重复入堆 Dijkstra 为 $O((N+M)log(N+M))$，空间 $O(N+M)$；建完可多源分别运行。
 
-设区间操作数为 $q$、普通边数为 $m$、区间到区间操作数为 $b$，新图顶点数为 $3n-2+b$，边数为 $O(n+m+q log n)$。本实现使用允许重复入堆的优先队列，Dijkstra 的上界为 $O((N+M) log(N+M))$，空间 $O(N+M)$，其中 `N,M` 是新图规模。距离和使用 `i128`；建图完成后可重复从不同源点运行。
-
-来源：wzj52501，#link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Graph-Misc-Problems.pdf")[《图论杂题选讲》PDF 第 46–50 页]；从单向区间边扩展到双树与区间到区间。说明文字：CC BY-NC-SA 4.0。
+来源：wzj52501，#link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Graph-Misc-Problems.pdf")[《图论杂题选讲》46–50 页]。说明文字 CC BY-NC-SA 4.0。

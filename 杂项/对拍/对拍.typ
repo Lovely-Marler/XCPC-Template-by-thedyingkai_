@@ -1,5 +1,5 @@
-对拍先把同一份小数据分别交给暴力和正解，只比较题目真正要求的答案。生成器应集中覆盖最小规模、重复值、全相等、极值、空结构和随机操作；一旦出错，必须打印种子和完整输入，使这组数据可以单独复现。暴力只求简单可信，不必追求复杂度；正解直接调用准备提交的核心函数，避免复制出另一份实现。
+同一份小数据分别运行暴力与待提交代码，比较题目要求的答案。生成器覆盖最小规模、重复值、全相等、极值、空结构和随机操作；失配时保留种子与完整输入。
 
-`单进程函数对拍.cpp` 提供 `Stress::run`。把 `generate(rng)`、`brute(case)`、`solve(case)` 和 `printCase` 传进去即可；默认用 `==` 比较。每次改题只替换这四个函数，数据结构和算法板本身不要塞随机逻辑。无序答案先用 `unorderedAnswer` 排序；浮点答案用 `close`，同时检查绝对误差和相对误差。题目允许多解时不要直接比较输出文本，应写一个 `equal(expected,actual)` 验证可行性和目标值。
+*函数对拍*　向 `Stress::run` 传 `generate(rng)`、`brute(case)`、`solve(case)`、`printCase`，默认用 `==` 比较。无序结果可用 `unorderedAnswer` 排序，浮点用 `close` 同时检查绝对与相对误差；多解题传自定义 `equal(expected,actual)` 检查可行性和目标值。
 
-`进程对拍.cpp` 用法是 `stress generator brute solve [tests]`。生成器从命令行读取种子，三个程序都使用标准输入输出；失配时保留 `stress.in`、`stress.ans`、`stress.out`。默认逐 token 比较，能忽略行末空格，但不能处理浮点误差、无序集合或多解题，这些情况应改 checker，或改用单进程板传入自定义比较器。程序崩溃和非零退出码与答案错误分开报告，超时则在外层终端给进程加时间限制。
+*进程对拍*　运行 `stress generator brute solve [tests]`。生成器从命令行读种子，三个程序均用标准输入输出；失配留下 `stress.in`、`stress.ans`、`stress.out`。默认逐 token 比较；浮点、无序答案、多解题需换 checker。崩溃和非零退出码单独报告，超时限制由外层进程设置。

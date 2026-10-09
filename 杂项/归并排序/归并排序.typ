@@ -1,9 +1,9 @@
-归并排序递归排好左右两半，再用两个指针线性合并；右半元素先于左半剩余元素取出时，它与左半所有剩余元素都构成逆序对。当前 `a[1..n]` 原地排序并把严格逆序对数写入 `inv_count`；`sort(n,compare)` 接受自定义严格弱序且保持等价元素的原顺序，可把对象编号放进数组、在比较器中访问对象本体。
+稳定排序并统计严格逆序对，时间 $O(n log n)$，空间 $O(n)$。构造 `MergeSorter(n)`，填 `a[1..n]`，调用 `sort(n)`；原地排序后的结果在 `a`，逆序对在 `inv_count`，每次排序会重置计数。
 
-- 构造 `MergeSorter(n)` 后把数据写入 `a[1..n]`，调用 `sort(n)`；`a[0]` 不参与排序。
-- `sort` 每次调用前都会重置 `inv_count`；传入自定义序时，`inv_count` 统计的是初始编号序相对该比较序的逆序对。
-- 元素类型固定为 `int`，逆序对答案为 `i64`；值超出 `int` 时同步修改 `a`、`temp` 的类型。
+`sort(n,compare)` 接受严格弱序；等价元素保留原顺序。逆序对相对该比较序定义：右侧元素严格先于左侧当前元素时，增加左侧剩余数量。
 
-- 洛谷 P1908「逆序对」。
-- Library Checker 的极角排序用点编号作为 `a[i]`。比较器先把 `y<0`、`y==0 且 x>=0`、其余点分成 `-1,0,1` 三段；段内用 `cross(left,right)>0` 判断先后，叉积用 `i128`。这部分是题目的极角顺序，真正的排序和稳定合并仍由本板完成。
-- #link("https://judge.yosupo.jp/problem/sort_points_by_argument")[Library Checker · Sort Points by Argument]
+元素固定为 `int`，计数为 `i64`；扩大值域时同时改 `a`、`temp`。排序对象可存编号，比较器通过编号访问原对象。
+
+极角排序按 `y<0`、`y==0 && x>=0`、其余三组依次排列，组内用 `cross(left,right)>0`，叉积先扩到 `i128`。
+
+题目：P1908；#link("https://judge.yosupo.jp/problem/sort_points_by_argument")[Sort Points by Argument]。

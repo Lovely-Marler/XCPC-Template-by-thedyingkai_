@@ -1,9 +1,9 @@
-给定有向图，SCC 把所有互相可达的点归入同一强连通分量，再把分量间的边缩成一张 DAG。原图中绕环才能决定的依赖、收益和可达性，缩点后通常就能按拓扑序做 DP；2-SAT 则检查同一变量取真和取假的两个状态是否落入同一 SCC。
+将有向图互相可达的点缩为 SCC，结果为 DAG。`work()` 后读取 `scc[u]`、分量数 `cnt`、大小 `sz[id]`。显式 DFS 栈，主过程时间、空间 $O(n+m)$。
 
-DFS 时把尚未确定分量的点留在 Tarjan 栈中。`low[u]` 记录从 `u` 的 DFS 子树经树边和至多一条返祖方向能到达的最小 `dfn`；遇到仍在栈中的边 `u -> v` 才能用 `dfn[v]` 更新。若 `low[u] == dfn[u]`，`u` 以上直到栈顶的点既能回到 `u`，也随 DFS 路径由 `u` 到达，恰好组成一个完整 SCC。
+当前编号按逆拓扑序产生，缩点边从大编号指向小编号。`shrink()` 排序去重出边，最坏 $O(n+m log m)$；若重边表示不同方案，须按题意保留重数。
 
-`work()` 后，`scc[u]` 是分量编号，`cnt` 是分量数，`sz[id]` 是大小；Tarjan 本身的时间和空间均为 $O(n+m)$，当前实现使用显式 DFS 栈，长链不会递归爆栈。`shrink()` 会逐个分量排序并去重出边，最坏时间是 $O(n+m log m)$。当前分量编号是逆拓扑序，缩点边从较大编号指向较小编号；凡是根据编号直接赋值或 DP，都要先确认这个方向。
+*low 更新*　DFS 树边返回时用子节点 `low`；遇已访问边，仅当目标仍在 Tarjan 栈中才用其 `dfn`。`low[u]==dfn[u]` 时弹栈至 `u`，得到一个 SCC。
 
-点权先按 `scc[u]` 合并，再在缩点边上统计入度、出度或做 DP。原图重边是否保留取决于题意，当前 `shrink()` 会去重。若要把一张至少有两个 SCC 的图补成强连通图，最少边数是“零入度 SCC 数”和“零出度 SCC 数”的较大者；只有一个 SCC 时答案为零。
+缩点 DP 先按 `scc[u]` 合并点权，再按拓扑依赖处理。补成强连通图：已有一个 SCC 时为 0，否则为 `max(零入度分量数,零出度分量数)`。
 
-#link("https://judge.yosupo.jp/problem/scc")[Library Checker · Strongly Connected Components]
+题目：#link("https://judge.yosupo.jp/problem/scc")[Strongly Connected Components]。

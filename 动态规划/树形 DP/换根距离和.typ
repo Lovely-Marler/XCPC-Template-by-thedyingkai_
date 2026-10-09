@@ -1,13 +1,13 @@
-`rerootDistanceSum(graph, mass)` 求每个点到全部点的带权距离和：
-$ "answer"[u] = sum_v "mass"[v] dot "dist"(u,v). $
-顶点使用 *1 下标*，输入必须是一棵连通无向树，每条边在邻接表中存两次。`mass[v]=1` 即普通距离和。边权、点质量为 `i64`，乘积及答案使用 `i128`，要求所有中间结果可表示。
+`rerootDistanceSum(graph,mass)` 求所有点的带权距离和：
+$ "ans"[u]=sum_v "mass"[v] dot "dist"(u,v). $
+顶点为 `1..n`、`n>=1`，`graph` 和 `mass` 均留 0 号位。输入为连通无向树，每条边存两次；`mass[v]=1` 得普通距离和。时间、空间 $O(n)$，遍历不使用深递归。
 
-先任选点 `1` 为根，逆遍历序计算子树质量 `subtree[u]` 和子树距离和。将根从父亲 `p` 移到儿子 `u`，`u` 子树中的点都近了一个边长，其余点都远了一个边长，所以
-$ "answer"[u] = "answer"[p]+("total"-2 dot "subtree"[u]) dot w(p,u). $
-前序再遍历一次即可得到全部答案。时间、空间均为 $O(n)$；两次遍历都通过数组顺序完成，链形树也不需要线性深度的函数递归。
+*换根公式*　先以 1 为根，后序求子树质量 `sub[u]` 和 `ans[1]`。从父亲 `p` 移到儿子 `u`：
+$ "ans"[u]="ans"[p]+("total"-2"sub"[u]) dot w(p,u). $
+子树内距离减少一条边长，外部增加一条边长；前序套式得到全部答案。
 
-例如链 `1--2--3` 的边权分别为 `2,3`，点质量全为 `1`，答案依次为 `7,5,8`。算法按树上唯一简单路径计算距离，因此代数上也支持有符号点质量和边权；将答案用于“树上最短路”或重心选址时，需检查题目的非负条件。
+边权和质量输入为 `i64`，乘积与答案为 `i128`，所有中间量须在范围内。这里的距离按唯一简单路径定义，代数上允许有符号权；最短路或重心选址的性质另有非负要求。
 
-换根的关键是能移除一个儿子的贡献。可加信息用总量减子树；不可逆的结合运算通常改用儿子前后缀聚合，不能直接相减。
+改其他换根 DP 时，可加贡献用总量减子树；不可逆的结合运算用儿子前后缀聚合，求出排除当前儿子的贡献。
 
-参考 wzj52501 的 #link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Dynamic-Programming.pdf")[《动态规划》树形 DP 专题]，本节补充通用换根例板。
+来源：wzj52501，#link("https://github.com/wzj52501/awesome-competitive-olympiad-algorithms/blob/c3685028be8ac258074260f8d8bd825faddc4a76/Lectures/Dynamic-Programming.pdf")[《动态规划》树形 DP 专题]。

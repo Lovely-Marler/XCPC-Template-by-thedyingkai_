@@ -1,19 +1,14 @@
-`DujiaoSieve` 求远大于预筛范围的 $M(n)=sum_(i=1)^n mu(i)$ 和 $Phi(n)=sum_(i=1)^n phi(i)$。先调用 `init(B)` 线性筛到 $B>=1$，再用 `sumMu(n)` 或 `sumPhi(n)` 查询；前者返回 `i64`，后者返回精确 `i128`，均不取模。
+求大范围前缀和 $M(n)=sum_(i=1)^n mu(i)$、$Phi(n)=sum_(i=1)^n phi(i)$。先 `DujiaoSieve ds; ds.init(B);`，`B>=1`，再调用 `ds.sumMu(n)` 返回 `i64`，`ds.sumPhi(n)` 返回精确 `i128`。
 
-由 $mu ast 1=epsilon$，把所有 $i<=n$ 按 $floor(n/i)$ 分组可得 $M(n)=1-sum_(l=2)^n M(floor(n/l))$；由 $phi ast 1=id$ 同理得到 $Phi(n)=n(n+1)/2-sum_(l=2)^n Phi(floor(n/l))$。相同商整段计算并记忆化，每个所需的商值只求一次。单次大查询常取 $B$ 约为 $n^(2/3)$，典型复杂度 $O(n^(2/3))$，实际可按内存和多询问分布调整。
+*递推*　由 $mu ast 1=epsilon$、$phi ast 1="id"$：
+$ M(n)=1-sum_(b=2)^n M(floor(n/b)), $
+$ Phi(n)=n(n+1)/2-sum_(b=2)^n Phi(floor(n/b)). $
+从 `l=2` 分块，`q=n/l,r=n/q`，一块贡献 `(r-l+1)*F(q)`；小值查预筛，大值记忆化。
 
-递推来自交换卷积求和的顺序。设 $h=f ast g$，对应前缀和为 $H,F,G$，则
-$H(n)=sum_(a b<=n) f(a)g(b)=sum_(b=1)^n g(b)F(floor(n/b))$。
-把 $b=1$ 的项移到左侧，得到
-$g(1)F(n)=H(n)-sum_(b=2)^n g(b)F(floor(n/b))$。
-这要求 $H(n)$ 和 $G(n)$ 都容易求，且除以 $g(1)$ 合法；板子使用 $g=1$，因而每段的系数就是段长。对于莫比乌斯函数，$sum_(d mid v)mu(d)$ 仅在 $v=1$ 时为一，所以 $H(n)=1$；对于欧拉函数，$sum_(d mid v)phi(d)=v$，故 $H(n)=n(n+1)/2$。
+单次上界 `n` 常取 $B≈n^(2/3)$，典型时间 $O(n^(2/3))$，空间 $O(B+n/B)$。多询问共享缓存，状态数随上界分布变化；`init` 会清空缓存。
 
-循环从 `l=2` 开始，是因为 `l=1` 对应正在求的自身。设当前商为 `q=n/l`，则直到 `r=n/q`，商都等于 `q`，这一整段贡献为 `(r-l+1)*F(q)`。例如 $n=10$ 时，$b=4,5$ 都查询 $F(2)$，$b=6,...,10$ 都查询 $F(1)$。由于其余商严格小于 $n$，递归最终落入预筛表；重复的较大商由记忆化直接返回。
+*改函数*　找 $h=f ast g$，令前缀和为 $H,F,G$：
+$ g(1)F(n)=H(n)-sum_(b=2)^n g(b)F(floor(n/b)). $
+要求 `H,G` 易求且 `g(1)` 可除；分块系数为 `G(r)-G(l-1)`。区间和用两个前缀相减。三角和先在 `i128` 中算，合数模下避免直接用 `inv2`。
 
-对单个上界 $n$，大于 $B$ 的记忆化状态数为 $O(n/B)$，加上线性筛，空间为 $O(B+n/B)$。多次查询可以共享缓存，但不同上界产生的整除商未必相同，不能把单次查询的界直接当成任意多询问的总复杂度。`init` 会清空旧缓存，同一批询问应预先选好 $B$ 后统一初始化。
-
-改求其他函数时，应先找到容易求前缀和的狄利克雷卷积 $h=f ast g$ 且 `g(1)=1`，再重新推导递推；只替换线性筛数组会得到错误公式。题目要求取模时，三角和先在 `i128` 中完成再取模，合数模数下不要直接乘 `inv2`。
-
-若 $g$ 不恒为一，分块系数改成 $G(r)-G(l-1)$。区间和用两个前缀相减；莫比乌斯反演后的求和若需要 $M(r)-M(l-1)$，也可直接接 `sumMu`，但仍需估计这些查询累计生成多少状态。`sumPhi` 返回 `i128`，输出和后续乘法也要保留这个类型；只把返回结果存进 `i64` 会重新截断大答案。
-
-#link("https://judge.yosupo.jp/problem/sum_of_totient_function")[Library Checker · sum_of_totient_function]
+题目：#link("https://judge.yosupo.jp/problem/sum_of_totient_function")[Sum of Totient Function]。
