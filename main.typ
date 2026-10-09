@@ -623,6 +623,12 @@
 
 #code("图论/树链剖分/树链剖分.cpp")
 
+== 点分治
+
+#include "图论/点分治/点分治.typ"
+
+#code("图论/点分治/点分治.cpp", mode: "full", ignore-main: false)
+
 == 虚树
 
 #include "图论/虚树/虚树.typ"
