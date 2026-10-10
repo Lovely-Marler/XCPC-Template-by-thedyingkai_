@@ -1,3 +1,5 @@
+#set heading(outlined: false)
+
 // Contest lookup notes; explanations are independently synthesized.
 #import "../../template/trick-code.typ": trick-code
 

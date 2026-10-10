@@ -1,3 +1,5 @@
+#set heading(outlined: false)
+
 训练时从题面信号定位条目，再核对该条适用条件。编号与各章 Trick 小节一致。
 
 #table(columns: (1fr, 1fr, auto), table.header([题面信号], [优先尝试], [条目]),
