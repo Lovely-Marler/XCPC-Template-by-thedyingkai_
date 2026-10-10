@@ -42,16 +42,6 @@
 
 `数学/计算几何/计算几何技巧.cpp` 提供 10 个可切割区段：整数极角、角度归一化、开闭半圆、两种覆盖角宽、原点三角形计数、凸包点定位、有向面积、闵可夫斯基和／差、精确直线交点、最优整点中点构造。整文件依赖已有的凸包与点线基础；复制片段时注意正文中的依赖和输入约定。
 
-新增算法可运行独立枚举对拍：
-
-```powershell
-New-Item -ItemType Directory -Path dist -Force | Out-Null
-g++ -std=gnu++20 -O2 -Wall -Wextra -static scripts/check-geometry.cpp -o dist/check-geometry.exe
-.\dist\check-geometry.exe
-```
-
-对拍固定种子为 20261010，覆盖排序关系、重复与反向方向、两种覆盖量词、凸包边界、点／线段退化、分数交点、点集状态 BFS 与中点最少步数，以及面积贡献的卷积下标；保留断言运行，不加 `-DNDEBUG`。
-
 ## 本地渲染
 
 渲染当前 `VERSION` 对应的 PDF：
